@@ -1,21 +1,46 @@
 // Testing Pure Functions
 
 // 💣 remove this todo test (it's only here so you don't get an error about missing tests)
-test.todo('remove me')
-
 // 🐨 import the function that we're testing
 // 💰 import {isPasswordAllowed} from '../auth'
+import cases from 'jest-in-case'
+import { isPasswordAllowed } from '../auth'
 
 // 🐨 write tests for valid and invalid passwords
 // 💰 here are some you can use:
 //
-// valid:
-// - !aBc123
-//
-// invalid:
-// - a2c! // too short
-// - 123456! // no alphabet characters
-// - ABCdef! // no numbers
-// - abc123! // no uppercase letters
-// - ABC123! // no lowercase letters
-// - ABCdef123 // no non-alphanumeric characters
+
+function casify(obj) {
+  return Object.entries(obj).map(([name, password]) => {
+    return {
+      name: `${password} - ${name}`,
+      password
+    }
+  })
+}
+
+cases(
+  'isPasswordAllowed valid passwords',
+  (options) => {
+    expect(isPasswordAllowed(options.password)).toBe(true)
+  },
+  casify({
+    'valid password': '!aBc123'
+  })
+)
+
+cases(
+  'isPasswordAllowed invalid passwords',
+  (options) => {
+    expect(isPasswordAllowed(options.password)).toBe(false)
+  },
+  casify({
+    'too short': 'a2c!',
+    'no letters': '123456!',
+    'no numbers': 'ABCdef!',
+    'no uppercase letters': 'abc123!',
+    'no lowercase letters': 'ABC123!',
+    'non alphanumeric characters': 'ABCdef123'
+  })
+)
+
